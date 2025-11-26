@@ -21,3 +21,4 @@ yarn-debug.log*
 # Archivos del sistema / IDE
 .DS_Store
 .vscode/
+git init -b main
