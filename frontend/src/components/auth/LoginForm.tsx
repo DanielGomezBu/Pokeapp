@@ -42,9 +42,10 @@ export default function LoginForm()
         />
 
         <button
+        onClick={() => router.push("/dashboard")}
           type="submit"
           className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
-        >
+        > 
           Entrar
         </button>
       </form>
