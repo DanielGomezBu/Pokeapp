@@ -16,12 +16,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from api.views import RegisterView, LoginView, PokemonSearchView, MeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/register/', RegisterView.as_view()),
-    path('api/login/', LoginView.as_view()),
-    path('auth/me/', MeView.as_view()),
-    path('api/pokemon/', PokemonSearchView.as_view()),
+    path('auth/', include('api_auth.urls')),       # rutas de autenticación
+    path('pokemon/', include('api_pokemon.urls')), # rutas de Pokémon
 ]

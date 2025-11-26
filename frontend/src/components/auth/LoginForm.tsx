@@ -1,39 +1,57 @@
-// src/components/auth/LoginForm.tsx
-"use client"; // Necesario porque vamos a usar useState más adelante
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export default function LoginForm() 
-{
+export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
 
+  // Helper para hacer fetch con token
+  const fetchWithToken = async (url: string, options: RequestInit = {}) => {
+    const token = localStorage.getItem("token");
+    const headers = {
+      ...(options.headers || {}),
+      ...(token ? { Authorization: `Token ${token}` } : {}),
+    };
+    return fetch(url, { ...options, headers });
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/login/", {
+      const res = await fetch("http://127.0.0.1:8000/auth/login/", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
 
-      if (res.ok) {
-        // Guardamos el token en localStorage
-        localStorage.setItem("token", data.token);
-
-        // Redirigir al dashboard
-        router.push("/dashboard");
-      } else {
-        // Mostrar error
+      if (!res.ok) {
         setError(data.error || "Error al iniciar sesión");
+        return;
       }
+
+      // Guardamos token
+      localStorage.setItem("token", data.token);
+
+      // Comprobamos /auth/me/ inmediatamente
+      const meRes = await fetchWithToken("http://127.0.0.1:8000/auth/me/");
+      if (!meRes.ok) {
+        setError("No se pudo validar usuario con el token");
+        return;
+      }
+
+      const meData = await meRes.json();
+      console.log("Usuario logueado:", meData);
+
+      // Redirigir al dashboard
+      router.push("/dashboard");
     } catch (err) {
       console.error(err);
       setError("Error de conexión con el servidor");
@@ -46,9 +64,7 @@ export default function LoginForm()
         Iniciar sesión
       </h2>
 
-      {error && (
-        <p className="text-red-600 text-center mb-4">{error}</p>
-      )}
+      {error && <p className="text-red-600 text-center mb-4">{error}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <input

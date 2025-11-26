@@ -15,6 +15,14 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',         # ruta de tu base de datos
     }
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    
+}
+
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
@@ -29,7 +37,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'api',
+    'api_auth',       # nueva app de autenticación
+    'api_pokemon',    # nueva app de Pokémon
 ]
 
 MIDDLEWARE = [

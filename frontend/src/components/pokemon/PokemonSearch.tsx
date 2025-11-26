@@ -21,7 +21,7 @@ export default function PokemonSearch() {
   const [tempType, setTempType] = useState("");
   const [tempRegion, setTempRegion] = useState("");
 
-  // 🔥 Ahora recibe los filtros directamente (no depende del estado)
+  // Ahora recibe los filtros directamente (no depende del estado)
   const fetchPokemon = async (filters: any) => {
     setLoading(true);
     setError("");
@@ -35,7 +35,7 @@ export default function PokemonSearch() {
 
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://127.0.0.1:8000/api/pokemon/?${params.toString()}`,
+        `http://127.0.0.1:8000/pokemon/search/?${params.toString()}`,
         {
           headers: token ? { Authorization: `Token ${token}` } : undefined,
         }

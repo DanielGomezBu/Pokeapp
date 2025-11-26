@@ -16,7 +16,7 @@ export default function DashboardPage() {
     }
 
     // Validar token con backend
-    fetch("http://127.0.0.1:8000/api/auth/me/", {
+    fetch("http://127.0.0.1:8000/auth/me/", {
       headers: { Authorization: `Token ${token}` },
     })
       .then((res) => {
