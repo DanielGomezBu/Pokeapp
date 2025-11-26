@@ -1,7 +1,37 @@
-// src/app/dashboard/page.tsx
+"use client"; // importante para usar hooks
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import PokemonSearch from "@/components/pokemon/PokemonSearch";
 
 export default function DashboardPage() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      router.push("/login"); // redirige si no hay token
+      return;
+    }
+
+    // Validar token con backend
+    fetch("http://127.0.0.1:8000/api/auth/me/", {
+      headers: { Authorization: `Token ${token}` },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("No autorizado");
+        return res.json();
+      })
+      .then(() => setLoading(false))
+      .catch(() => {
+        localStorage.removeItem("token");
+        router.push("/login");
+      });
+  }, [router]);
+
+  if (loading) return <p className="text-center mt-12">Cargando...</p>;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header fijo */}

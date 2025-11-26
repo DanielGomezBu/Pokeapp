@@ -6,6 +6,7 @@ from django.contrib.auth import authenticate
 from .serializers import RegisterSerializer
 import requests
 from concurrent.futures import ThreadPoolExecutor
+from rest_framework.permissions import IsAuthenticated
 
 # REGISTER
 class RegisterView(APIView):
@@ -30,6 +31,17 @@ class LoginView(APIView):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({'token': token.key})
         return Response({'error': 'Credenciales inválidas'}, status=400)
+
+class MeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'username': user.username,
+            'email': user.email,
+            'id': user.id
+        })
 
 # BÚSQUEDA POKÉMON (usa PokeAPI) AÑADIR BUSQUEDA POR NUMERO Y TIPO Y REGIÓN
 class PokemonSearchView(APIView):
