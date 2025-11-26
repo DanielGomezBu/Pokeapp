@@ -2,11 +2,13 @@
 "use client"; // Necesario porque vamos a usar useState más adelante
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LoginForm() 
 {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +50,12 @@ export default function LoginForm()
       </form>
 
       <p className="text-center mt-6 text-gray-600">
-        ¿No tienes cuenta? <span className="text-indigo-600 font-medium">Regístrate</span>
+        ¿No tienes cuenta? 
+        
+        <button 
+        
+        onClick={() => router.push("/register")}
+        className="text-indigo-600 font-medium">Regístrate</button>
       </p>
     </div>
   );
