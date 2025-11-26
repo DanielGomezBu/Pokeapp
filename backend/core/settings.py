@@ -1,10 +1,23 @@
-from pathlib import Path
 import os
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
+STATIC_URL = '/static/'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "clave_de_prueba_para_localhost")
+ROOT_URLCONF = 'core.urls'
 
-# ... (el resto del archivo que ya tenía Django: SECRET_KEY, DEBUG=True, ALLOWED_HOSTS, etc.)
+
+DEBUG = True
+ALLOWED_HOSTS = ["*"]
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',  # ← obligatorio, sin esto no funciona
+        'NAME': BASE_DIR / 'db.sqlite3',         # ruta de tu base de datos
+    }
+}
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -13,16 +26,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-
-    'api',  # ← ¡¡NUESTRA APP!! (importante)
+    'api',
 ]
 
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # ← SIEMPRE PRIMERO
+    'corsheaders.middleware.CorsMiddleware',  # SIEMPRE PRIMERO
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -32,25 +43,21 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# CORS → permite que tu frontend (localhost:3000) hable con el backend
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
-
-# REST Framework → autenticación por token (lo usaremos para login)
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',
-    ],
-}
-
-# Base de datos → SQLite (fácil y sin instalar nada)
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [BASE_DIR / "templates"],  # aquí puedes poner tus propias plantillas
+        'APP_DIRS': True,                  # busca plantillas dentro de apps
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]

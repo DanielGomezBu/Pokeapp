@@ -8,12 +8,36 @@ export default function LoginForm()
 {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí más adelante pondremos la llamada al backend
-    alert(`Usuario: ${username}\nContraseña: ${password}`);
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Guardamos el token en localStorage
+        localStorage.setItem("token", data.token);
+
+        // Redirigir al dashboard
+        router.push("/dashboard");
+      } else {
+        // Mostrar error
+        setError(data.error || "Error al iniciar sesión");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Error de conexión con el servidor");
+    }
   };
 
   return (
@@ -21,6 +45,10 @@ export default function LoginForm()
       <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
         Iniciar sesión
       </h2>
+
+      {error && (
+        <p className="text-red-600 text-center mb-4">{error}</p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <input
@@ -42,21 +70,21 @@ export default function LoginForm()
         />
 
         <button
-        onClick={() => router.push("/dashboard")}
           type="submit"
           className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition"
-        > 
+        >
           Entrar
         </button>
       </form>
 
       <p className="text-center mt-6 text-gray-600">
-        ¿No tienes cuenta? 
-        
-        <button 
-        
-        onClick={() => router.push("/register")}
-        className="text-indigo-600 font-medium">Regístrate</button>
+        ¿No tienes cuenta?{" "}
+        <button
+          onClick={() => router.push("/register")}
+          className="text-indigo-600 font-medium"
+        >
+          Regístrate
+        </button>
       </p>
     </div>
   );

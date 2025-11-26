@@ -1,4 +1,3 @@
-// src/components/auth/RegisterForm.tsx
 "use client";
 
 import { useState } from "react";
@@ -19,7 +18,7 @@ export default function RegisterForm() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -28,11 +27,43 @@ export default function RegisterForm() {
       return;
     }
 
-    // Aquí más adelante irá la llamada real al backend
-    alert(`Registro simulado:\nUsuario: ${form.username}\nEmail: ${form.email}`);
-    
-    // Simulamos éxito y vamos al login
-    router.push("/login");
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/register/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username: form.username,
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Guardamos el token recibido
+        localStorage.setItem("token", data.token);
+
+        // Redirigir al dashboard o login
+        router.push("/dashboard"); // o "/login" si quieres que el usuario inicie sesión manual
+      } else {
+        // Mostrar errores devueltos por Django
+        if (typeof data === "object") {
+          setError(
+            Object.values(data)
+              .flat()
+              .join(" ")
+          );
+        } else {
+          setError("Error al registrarse");
+        }
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Error de conexión con el servidor");
+    }
   };
 
   return (

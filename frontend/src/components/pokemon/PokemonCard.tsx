@@ -47,23 +47,25 @@ export default function PokemonCard({ pokemon }: Props) {
 
         {/* Stats */}
         <div className="space-y-3">
-          {pokemon.stats.map((stat) => (
-            <div key={stat.name}>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="font-medium text-gray-700 capitalize">
-                  {stat.name.replace("-", " ")}
-                </span>
-                <span className="font-bold text-gray-800">{stat.value}</span>
-              </div>
-              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                <div
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 h-full rounded-full transition-all duration-700"
-                  style={{ width: `${(stat.value / 255) * 100}%` }}
-                />
-              </div>
-            </div>
-          ))}
+  {Array.isArray(pokemon.stats) ? (
+    pokemon.stats.map((stat) => (
+      <div key={stat.name}>
+        <div className="flex justify-between text-sm mb-1">
+          <span className="font-medium text-gray-700 capitalize">{stat.name}</span>
+          <span className="text-gray-500">{stat.value}</span>
         </div>
+        <div className="w-full bg-gray-200 rounded-full h-2.5">
+          <div
+            className="bg-blue-600 h-2.5 rounded-full"
+            style={{ width: `${stat.value}%` }}
+          ></div>
+        </div>
+      </div>
+    ))
+  ) : (
+    <p className="text-gray-400 text-sm">Sin estadísticas disponibles</p>
+  )}
+</div>
       </div>
     </div>
   );

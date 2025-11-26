@@ -34,25 +34,44 @@ class LoginView(APIView):
 class PokemonSearchView(APIView):
     def get(self, request):
         query = request.query_params.get('q', '').lower()
-        url = f"https://pokeapi.co/api/v2/pokemon?limit=1010"
-        response = requests.get(url).json()
+        limit = 30
+        url = "https://pokeapi.co/api/v2/pokemon?limit=1000"
+
+        try:
+            response = requests.get(url, timeout=10).json()
+        except requests.RequestException:
+            return Response({"error": "No se pudo conectar con la API"}, status=503)
+
         results = []
 
-        for pokemon in response['results']:
-            if query in pokemon['name']:
-                data = requests.get(pokemon['url']).json()
-                results.append({
-                    'name': data['name'].capitalize(),
-                    'number': data['id'],
-                    'image': data['sprites']['other']['official-artwork']['front_default'] or data['sprites']['front_default'],
-                    'types': [t['type']['name'] for t in data['types']],
-                    'region': self.get_region(data['id']),
-                    'stats': {s['stat']['name'].replace('special-', 'sp-'): s['base_stat'] for s in data['stats']}
-                })
-                if len(results) >= 20:
-                    break
-        return Response(results)
+        for pokemon in response.get('results', []):
+            # Aplicar filtro por nombre
+            if query and query not in pokemon['name']:
+                continue  # Ignorar Pokémon que no coincidan
 
+            # Traer datos completos del Pokémon
+            try:
+                data = requests.get(pokemon['url'], timeout=10).json()
+            except requests.RequestException:
+                continue  # Ignorar Pokémon que no cargan
+
+            results.append({
+                'name': data['name'].capitalize(),
+                'number': data['id'],
+                'image': data['sprites']['other']['official-artwork']['front_default']
+                        or data['sprites']['front_default'],
+                'types': [t['type']['name'] for t in data['types']],
+                'region': self.get_region(data['id']),
+                'stats': [
+                    {'name': s['stat']['name'].replace('special-', 'sp-'), 'value': s['base_stat']}
+                    for s in data['stats']
+                ]
+            })
+
+            if len(results) >= limit:
+                break
+
+        return Response(results)
     def get_region(self, id):
         if id <= 151: return "Kanto"
         elif id <= 251: return "Johto"
