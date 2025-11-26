@@ -1,0 +1,23 @@
+# Dependencias
+node_modules/
+
+# Build / producción / compilaciones
+dist/
+build/
+.cache/
+.next/
+out/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+*.log
+
+# Variables de entorno / configuración sensible
+.env
+.env.local
+.env.*.local
+
+# Archivos del sistema / IDE
+.DS_Store
+.vscode/
