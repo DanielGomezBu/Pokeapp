@@ -37,6 +37,7 @@ export default function RegisterForm() {
           username: form.username,
           email: form.email,
           password: form.password,
+          password2: form.password2,
         }),
       });
 
@@ -117,7 +118,7 @@ export default function RegisterForm() {
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-900 transition"
         >
           Registrarse
         </button>

@@ -14,6 +14,8 @@ export default function PokemonSearch() {
   const [pokemonList, setPokemonList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [tempSearch, setTempSearch] = useState("");
+
 
   // Función para buscar Pokémon en el backend
   const fetchPokemon = async () => {
@@ -63,10 +65,16 @@ export default function PokemonSearch() {
           <input
             type="text"
             placeholder="Nombre del Pokémon"
-            value={search.name}
-            onChange={(e) => setSearch({ ...search, name: e.target.value })}
-            className="col-span-12 md:col-span-5 px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-600 text-gray-900 font-medium text-lg"
-          />
+            value={tempSearch}
+            onChange={(e) => setTempSearch(e.target.value)} // Guardamos temporalmente
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault(); // Evita el submit por defecto del formulario
+                setSearch({ ...search, name: tempSearch }); // Solo actualiza search al presionar Enter
+              }
+  }}
+  className="col-span-12 md:col-span-5 px-5 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-600 text-gray-900 font-medium text-lg"
+/>
 
           {/* Número */}
           <input

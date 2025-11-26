@@ -46,7 +46,7 @@ class PokemonSearchView(APIView):
 
         for pokemon in response.get('results', []):
             # Aplicar filtro por nombre
-            if query and query not in pokemon['name']:
+            if query not in pokemon['name']:
                 continue  # Ignorar Pokémon que no coincidan
 
             # Traer datos completos del Pokémon
