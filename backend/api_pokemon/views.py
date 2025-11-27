@@ -27,7 +27,7 @@ class PokemonSearchView(APIView):
                 return Response({"error": "No se pudo conectar con la API de tipos"}, status=503)
         else:
             # Obtener todos los Pokémon si no hay tipo
-            url = "https://pokeapi.co/api/v2/pokemon?limit=1000"
+            url = "https://pokeapi.co/api/v2/pokemon?limit=1500"
             try:
                 response = requests.get(url, timeout=10).json()
                 all_pokemon = [p['name'] for p in response.get('results', [])]
@@ -48,7 +48,7 @@ class PokemonSearchView(APIView):
                 if str(data['id']) != str(queryid):
                     continue
             filtered_pokemon.append(name)
-            if len(filtered_pokemon) >= 100:  # límite para no sobrecargar requests paralelas
+            if len(filtered_pokemon) >= 900:  # límite para no sobrecargar requests paralelas
                 break
 
         # Paso 3: Obtener datos completos en paralelo solo de los Pokémon filtrados
