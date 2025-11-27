@@ -1,32 +1,30 @@
 import os
 from pathlib import Path
+
+# Ruta base del proyecto
 BASE_DIR = Path(__file__).resolve().parent.parent
-STATIC_URL = '/static/'
+
+# Seguridad
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "clave_de_prueba_para_localhost")
-ROOT_URLCONF = 'core.urls'
-
-
 DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
+# URLs y rutas estáticas
+ROOT_URLCONF = 'core.urls'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # solo ruta local, no URL
+]
+
+# Base de datos
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # ← obligatorio, sin esto no funciona
-        'NAME': BASE_DIR / 'db.sqlite3',         # ruta de tu base de datos
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
 
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.TokenAuthentication',
-    ],
-    
-}
-
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
-
+# Apps instaladas
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -37,12 +35,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'api_auth',       # nueva app de autenticación
-    'api_pokemon',    # nueva app de Pokémon
+    'api_auth',
+    'api_pokemon',
 ]
 
+# Middleware
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # SIEMPRE PRIMERO
+    'corsheaders.middleware.CorsMiddleware',  # siempre primero
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,14 +51,27 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# CORS (permite a frontend en localhost:3000 comunicarse)
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+# Django REST Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+}
+
+# Plantillas
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / "templates"],  # aquí puedes poner tus propias plantillas
-        'APP_DIRS': True,                  # busca plantillas dentro de apps
+        'DIRS': [BASE_DIR / "templates"],  # plantillas locales
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',

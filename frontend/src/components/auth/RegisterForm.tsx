@@ -13,6 +13,8 @@ export default function RegisterForm() {
 
   const [error, setError] = useState("");
   const router = useRouter();
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -28,7 +30,7 @@ export default function RegisterForm() {
     }
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/auth/register/", {
+      const res = await fetch(`${API_URL}/auth/register/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

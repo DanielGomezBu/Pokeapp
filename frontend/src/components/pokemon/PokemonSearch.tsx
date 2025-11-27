@@ -14,6 +14,8 @@ export default function PokemonSearch() {
   const [pokemonList, setPokemonList] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 
   // Valores temporales para escribir sin disparar búsqueda
   const [tempName, setTempName] = useState("");
@@ -35,7 +37,7 @@ export default function PokemonSearch() {
 
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://127.0.0.1:8000/pokemon/search/?${params.toString()}`,
+        `${API_URL}/pokemon/search/?${params.toString()}`,
         {
           headers: token ? { Authorization: `Token ${token}` } : undefined,
         }

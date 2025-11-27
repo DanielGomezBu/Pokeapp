@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+
 export default function LoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-
+  const API_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+  
   // Helper para hacer fetch con token
   const fetchWithToken = async (url: string, options: RequestInit = {}) => {
     const token = localStorage.getItem("token");
@@ -18,19 +20,20 @@ export default function LoginForm() {
     };
     return fetch(url, { ...options, headers });
   };
-
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/auth/login/", {
+      const res = await fetch(`${API_URL}/auth/login/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
+      console.log("API_URL:", process.env.NEXT_PUBLIC_API_BASE_URL);
 
       if (!res.ok) {
         setError(data.error || "Error al iniciar sesión");
@@ -41,7 +44,7 @@ export default function LoginForm() {
       localStorage.setItem("token", data.token);
 
       // Comprobamos /auth/me/ inmediatamente
-      const meRes = await fetchWithToken("http://127.0.0.1:8000/auth/me/");
+      const meRes = await fetchWithToken(`${API_URL}/auth/me/`);
       if (!meRes.ok) {
         setError("No se pudo validar usuario con el token");
         return;
